@@ -1,7 +1,3 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - main
 
@@ -34,7 +30,7 @@ stages:
     - task: PublishPipelineArtifact@1
       inputs:
         targetPath: '$(Pipeline.Workspace)/s/kubernetes'
-        artifact: 'manifest'
+        artifact: 'manifests'
         publishLocation: 'pipeline'
 - stage: Deploy
   displayName: Deploy to Dev
@@ -50,8 +46,8 @@ stages:
       - task: DownloadPipelineArtifact@2
         inputs:
           buildType: 'current'
-          artifactName: 'manifest'
-          targetPath: '$(Pipeline.Workspace)/manifest'
+          artifactName: 'manifests'
+          targetPath: '$(Pipeline.Workspace)/manifests'
       - task: KubernetesManifest@0
         inputs:
           action: 'createSecret'
@@ -66,5 +62,5 @@ stages:
           kubernetesServiceConnection: 'aks'
           namespace: 'default'
           manifests: 
-            $(Pipeline.Workspace)/manifest/deployment.yml
-            $(Pipeline.Workspace)/manifest/service.yml
+            $(Pipeline.Workspace)/manifests/deployment.yml
+            $(Pipeline.Workspace)/manifests/service.yml
